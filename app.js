@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require("mongoose")
+const session = require('express-session');
 
 mongoose.connect('mongodb://127.0.0.1:27017/startMgs')
 .then(()=> console.log('Database is Up!'))
@@ -22,6 +23,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// use session
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 60000 // 1 minutes
+  }
+}));
+
+// main router
 app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
