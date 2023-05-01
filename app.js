@@ -6,7 +6,7 @@ var logger = require('morgan');
 const mongoose = require("mongoose")
 
 mongoose.connect('mongodb://127.0.0.1:27017/startMgs')
-.then(()=> console.log('Conected!'))
+.then(()=> console.log('Database is Up!'))
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
