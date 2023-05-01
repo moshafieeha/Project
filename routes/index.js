@@ -1,9 +1,12 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const authRoute = require('./auth.router')
+const renderRoute = require('./render.router')
+const userRoute = require('./user.router')
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+// divide the routes
+router.use("/auth", authRoute)
+router.use("/render", renderRoute)
+router.use("/render", userRoute)
 
 module.exports = router;
