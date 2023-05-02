@@ -5,8 +5,8 @@ const authRoute = require('./auth.router')
 // const userRoute = require('./user.router')
 
 // divide the routes
-router.use("/auth", authRoute)
+router.use("/auth",authRoute)
 // router.use("/render", renderRoute)
-// router.use("/render", userRoute)
+// router.use("/user", userRoute)
 
 module.exports = router;
