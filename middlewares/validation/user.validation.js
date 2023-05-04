@@ -2,6 +2,8 @@ const Joi = require("joi");
 const User = require("../../models/user.model");
 const mongoose = require("mongoose");
 const { isMobilePhone } = require("validator");
+const bcrypt = require("bcrypt");
+const createError = require("http-errors");
 
 // ---- check uniqueness of username
 // ---- check uniqueness of phone
@@ -74,6 +76,13 @@ const validateRegister = (req, res, next) => {
 // check the limitation of admins
 async function checkAdminLimit(req, res, next) {
   try {
+    const { role } = req.validatedUser;
+    if (role !== "admin") {
+      // Only restrict registration for admin role
+      next();
+      return;
+    }
+
     const adminCount = await User.countDocuments({ role: "admin" });
     const maxAdmins = 1;
 
@@ -89,52 +98,67 @@ async function checkAdminLimit(req, res, next) {
   }
 }
 
-
 // Middleware to validate login (Joi object)
 const validateLogin = (req, res, next) => {
-    const loginSchema = Joi.object({
-      username: Joi.string().min(3).max(30).required().trim(),
-      password: Joi.string().required(),
-    });
-  
-    const { error, value } = loginSchema.validate(req.body);
-    if (error) {
-      return next(createError(400, `Validation Error: ${error.details.map((detail) => detail.message).join(", ")}`));
-    }
-  
-    req.validatedLoginData = value;
-    next();
-  };
+  const loginSchema = Joi.object({
+    username: Joi.string().min(3).max(30).required().trim(),
+    password: Joi.string().required(),
+  });
+
+  const { error, value } = loginSchema.validate(req.body);
+  if (error) {
+    return next(
+      createError(
+        400,
+        `Validation Error: ${error.details
+          .map((detail) => detail.message)
+          .join(", ")}`
+      )
+    );
+  }
+
+  req.validatedLoginData = value;
+  next();
+};
 // Middleware to validate the password
 const validatePassword = async (req, res, next) => {
-    const { password } = req.body;
-  
-    try {
-      const isValidPassword = await bcrypt.compare(password, req.foundUser.password);
-      if (!isValidPassword) {
-        return next(createError(400, "Invalid password"));
-      }
-  
-      next();
-    } catch (err) {
-      return next(createError(500, err.message));
+  const { password } = req.body;
+
+  try {
+    const isValidPassword = await bcrypt.compare(
+      password,
+      req.foundUser.password
+    );
+    if (!isValidPassword) {
+      return next(createError(400, "Invalid password"));
     }
-  };
+
+    next();
+  } catch (err) {
+    return next(createError(500, err.message));
+  }
+};
 // Middleware to find the user in the database
 const findUser = async (req, res, next) => {
-    const { username } = req.body;
-  
-    try {
-      const user = await User.findOne({ username });
-      if (!user) {
-        return next(createError(400, "Invalid username"));
-      }
-  
-      req.foundUser = user;
-      next();
-    } catch (err) {
-      return next(createError(500, err.message));
-    }
-  };
+  const { username } = req.body;
 
-module.exports = { validateRegister, validateLogin, checkAdminLimit, validatePassword, findUser };
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return next(createError(400, "Invalid username"));
+    }
+
+    req.foundUser = user;
+    next();
+  } catch (err) {
+    return next(createError(500, err.message));
+  }
+};
+
+module.exports = {
+  validateRegister,
+  validateLogin,
+  checkAdminLimit,
+  validatePassword,
+  findUser,
+};
