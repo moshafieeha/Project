@@ -6,8 +6,7 @@ const { isMobilePhone } = require("validator");
 // ---- check uniqueness of username
 // ---- check uniqueness of phone
 
-
-// checking phone number in the server-side
+// check the phone number in the server-side
 const joiPhoneNumber = Joi.extend((joi) => {
   return {
     type: "phoneNumber",
@@ -50,12 +49,11 @@ const joiPhoneNumber = Joi.extend((joi) => {
     },
   };
 });
-
-// Joi object to validate
-const validateUser = (user) => {
-  const schema = Joi.object({
+// Middleware to validate registeration (Joi object)
+const validateRegister = (req, res, next) => {
+  const registeSchema = Joi.object({
     fName: Joi.string().min(3).max(30).required().trim(),
-    lName: Joi.string().min(3).max(30).required().trim(),    
+    lName: Joi.string().min(3).max(30).required().trim(),
     username: Joi.string().min(3).max(30).required().trim(),
     password: Joi.string()
       .pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)
@@ -65,14 +63,78 @@ const validateUser = (user) => {
     phone: joiPhoneNumber.phoneNumber().required(),
   });
 
-  const { error, value } = schema.validate(user);
-  if (error) {
-    error.message = `Validation Error: ${error.details
-      .map((detail) => detail.message)
-      .join(", ")}`;
-  }
+  const { error, value } = registeSchema.validate(req.body);
+  if (error) return next(createError(500, error.message));
 
-  return { error, value };
+  // If validation passes, store the validated user data in the request object
+  req.validatedUser = value;
+
+  next();
 };
+// check the limitation of admins
+async function checkAdminLimit(req, res, next) {
+  try {
+    const adminCount = await User.countDocuments({ role: "admin" });
+    const maxAdmins = 1;
 
-module.exports = { validateUser };
+    if (adminCount >= maxAdmins) {
+      return res.status(400).json({
+        message: `The maximum number of admins (${maxAdmins}) has been reached.`,
+      });
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+// Middleware to validate login (Joi object)
+const validateLogin = (req, res, next) => {
+    const loginSchema = Joi.object({
+      username: Joi.string().min(3).max(30).required().trim(),
+      password: Joi.string().required(),
+    });
+  
+    const { error, value } = loginSchema.validate(req.body);
+    if (error) {
+      return next(createError(400, `Validation Error: ${error.details.map((detail) => detail.message).join(", ")}`));
+    }
+  
+    req.validatedLoginData = value;
+    next();
+  };
+// Middleware to validate the password
+const validatePassword = async (req, res, next) => {
+    const { password } = req.body;
+  
+    try {
+      const isValidPassword = await bcrypt.compare(password, req.foundUser.password);
+      if (!isValidPassword) {
+        return next(createError(400, "Invalid password"));
+      }
+  
+      next();
+    } catch (err) {
+      return next(createError(500, err.message));
+    }
+  };
+// Middleware to find the user in the database
+const findUser = async (req, res, next) => {
+    const { username } = req.body;
+  
+    try {
+      const user = await User.findOne({ username });
+      if (!user) {
+        return next(createError(400, "Invalid username"));
+      }
+  
+      req.foundUser = user;
+      next();
+    } catch (err) {
+      return next(createError(500, err.message));
+    }
+  };
+
+module.exports = { validateRegister, validateLogin, checkAdminLimit, validatePassword, findUser };

@@ -5,75 +5,62 @@ const createError = require("http-errors");
 const bcrypt = require("bcrypt");
 
 // middlewares
-const { validateUser } = require("../middlewares/validation/user.validation");
-const { checkAdminLimit } = require("../middlewares/validation/user.admin");
+const {
+  validateRegister,
+  validateLogin,
+  checkAdminLimit,
+  validatePassword,
+  findUser,
+} = require("../middlewares/validation/user.validation");
 
 //////////////// Register ////////////////
-router.post("/Register", checkAdminLimit, async (req, res, next) => {
-  try {
-    const { error, value } = validateUser(req.body);
-    if (error) return next(createError(500, error.message));
+router.post(
+  "/Register",
+  checkAdminLimit,
+  validateRegister,
+  async (req, res, next) => {
+    try {
+      const user = new User(req.validatedUser);
+      await user.save();
 
-    // If validation passes, create a new user object and save it to the database
-    const user = new User({
-      fName: req.body.fName,
-      lName: req.body.lName,
-      username: req.body.username,
-      password: req.body.password,
-      gender: req.body.gender,
-      phone: req.body.phone,
-      role: req.body.role,
-    });
+      // Save the user data to the session
+      req.session.user = {
+        _id: user._id,
+        username: user.username,
+        fName: user.firstName,
+        lName: user.lastName,
+        role: user.role,
+      };
 
-    await user.save();
-
-    // Save the user data to the session
-    req.session.user = {
-      _id: user._id,
-      username: user.username,
-      fName: user.firstName,
-      lName: user.lastName,
-      role: user.role,
-    };
-
-    console.log(req.session.user);
-
-    res.status(201).json(user);
-  } catch (err) {
-    return next(createError(500, err.message));
+      res.status(201).json(user);
+    } catch (err) {
+      return next(createError(500, err.message));
+    }
   }
-});
+);
 
 //////////////// Login ////////////////
-router.post("/login", async (req, res, next) => {
-  try {
-    const { username, password } = req.body;
+router.post(
+  "/login",
+  validateLogin,
+  findUser,
+  validatePassword,
+  async (req, res, next) => {
+    try {
+      // Save the user data to the session
+      req.session.user = {
+        _id: req.foundUser._id,
+        username: req.foundUser.username,
+        fName: req.foundUser.firstName,
+        lName: req.foundUser.lastName,
+        role: req.foundUser.role,
+      };
 
-    // Find the user in the database
-    const user = await User.findOne({ username });
-    if (!user) {
-      return next(createError(400, "Invalid username"));
+      res.status(201).json(req.foundUser);
+    } catch (err) {
+      return next(createError(500, err.message));
     }
-
-    // Validate the password
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-      return next(createError(400, "Invalid password"));
-    }
-
-    // // Save the user data to the session
-    // req.session.user = {
-    //   _id: user._id,
-    //   username: user.username,
-    //   firstName: user.firstName,
-    //   lastName: user.lastName,
-    //   role: user.role,
-    // };
-
-    res.status(201).json(user);
-  } catch (err) {
-    return next(createError(500, err.message));
   }
-});
+);
 
 module.exports = router;
