@@ -3,15 +3,15 @@ const router = express.Router();
 const User = require("../models/user.model");
 const createError = require("http-errors");
 const bcrypt = require("bcrypt");
-const { validateUser } = require("../middlewares/validation/user.validation");
 
+// middlewares
+const { validateUser } = require("../middlewares/validation/user.validation");
+const { checkAdminLimit } = require("../middlewares/validation/user.admin");
 
 //////////////// Register ////////////////
-router.post("/Register", async (req, res, next) => {
+router.post("/Register", checkAdminLimit, async (req, res, next) => {
   try {
-    console.log("Request body:", req.body);
     const { error, value } = validateUser(req.body);
-    console.log("Validation result:", { error, value });
     if (error) return next(createError(500, error.message));
 
     // If validation passes, create a new user object and save it to the database
@@ -25,22 +25,21 @@ router.post("/Register", async (req, res, next) => {
       role: req.body.role,
     });
 
-    console.log(user);
     await user.save();
 
-    //   // Save the user data to the session
-    //   req.session.user = {
-    //     _id: user._id,
-    //     username: user.username,
-    //     firstName: user.firstName,
-    //     lastName: user.lastName,
-    //     role: user.role,
-    //   };
+    // Save the user data to the session
+    req.session.user = {
+      _id: user._id,
+      username: user.username,
+      fName: user.firstName,
+      lName: user.lastName,
+      role: user.role,
+    };
+
+    console.log(req.session.user);
 
     res.status(201).json(user);
   } catch (err) {
-    console.log("Caught error:", err);
-
     return next(createError(500, err.message));
   }
 });

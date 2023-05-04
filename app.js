@@ -6,7 +6,7 @@ const logger = require('morgan');
 const mongoose = require("mongoose")
 const session = require('express-session');
 
-mongoose.connect('mongodb://127.0.0.1:27017/startMgs')
+mongoose.connect('mongodb://127.0.0.1:27017/blog')
 .then(()=> console.log('Database is Up!'))
 
 const indexRouter = require('./routes/index');
