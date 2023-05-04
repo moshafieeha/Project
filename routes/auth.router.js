@@ -3,13 +3,16 @@ const router = express.Router();
 const User = require("../models/user.model");
 const createError = require("http-errors");
 const bcrypt = require("bcrypt");
+const { validateUser } = require("../middlewares/validation/user.validation");
+
 
 //////////////// Register ////////////////
 router.post("/Register", async (req, res, next) => {
   try {
-    // const { error } = validateUser(req.body);
-    //if (error) return next(createError(500, error.message));
-    console.log("innnnnnn");
+    console.log("Request body:", req.body);
+    const { error, value } = validateUser(req.body);
+    console.log("Validation result:", { error, value });
+    if (error) return next(createError(500, error.message));
 
     // If validation passes, create a new user object and save it to the database
     const user = new User({
@@ -36,6 +39,8 @@ router.post("/Register", async (req, res, next) => {
 
     res.status(201).json(user);
   } catch (err) {
+    console.log("Caught error:", err);
+
     return next(createError(500, err.message));
   }
 });
