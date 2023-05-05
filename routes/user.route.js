@@ -5,7 +5,7 @@ const User = require("../models/user.model");
 
 // middlewares
 const {
-  validateRegister,
+  validateUpdate,
   checkAdminLimit,
   validatePassword,
   findUser,
@@ -16,11 +16,9 @@ const { deleteUser } = require("../controllers/user.controller");
 
 // request handlers
 router.delete("/delete", deleteUser);
-router.put("/update", async (req, res, next) => {
+router.put("/update", validateUpdate, async (req, res, next) => {
   try {
     console.log(req.session.user);
-    const { error } = validateRegister(req.body);
-    if (error) return next(createError(500, error.message));
 
     // // Check that the new phone number is unique
     // const phoneExists = await User.findOne({
@@ -44,14 +42,14 @@ router.put("/update", async (req, res, next) => {
     const user = await User.findByIdAndUpdate(
       req.session.user._id,
       {
-        fName: req.body.firstName,
-        lName: req.body.lastName,
-        gender: req.body.gender,
-        role: req.body.role,
-        phone: req.body.phone,
-        username: req.body.username,
-        password: req.body.password
-          ? await bcrypt.hash(req.body.password, 10)
+        fName: req.validatedUser.firstName,
+        lName: req.validatedUser.lastName,
+        gender: req.validatedUser.gender,
+        role: req.validatedUser.role,
+        phone: req.validatedUser.phone,
+        username: req.validatedUser.username,
+        password: req.validatedUser.password
+          ? await bcrypt.hash(req.validatedUser.password, 10)
           : user.password,
       },
       { new: true } // return the updated document
@@ -61,8 +59,8 @@ router.put("/update", async (req, res, next) => {
     req.session.user = {
       _id: user._id,
       username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: user.fName,
+      lastName: user.lName,
       role: user.role,
     };
 

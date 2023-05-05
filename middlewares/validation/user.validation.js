@@ -97,7 +97,28 @@ const checkAdminLimit = async (req, res, next) => {
     next(error);
   }
 };
+// Middleware to validate update (Joi object)
+const validateUpdate = (req, res, next) => {
+  const updateSchema = Joi.object({
+    fName: Joi.string().min(3).max(30).optional().trim(),
+    lName: Joi.string().min(3).max(30).optional().trim(),
+    username: Joi.string().min(3).max(30).optional().trim(),
+    password: Joi.string()
+      .pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)
+      .optional(),
+    gender: Joi.string().valid("male", "female", "not-set").optional(),
+    role: Joi.string().valid("blogger", "admin").lowercase().trim().optional(),
+    phone: joiPhoneNumber.phoneNumber().optional(),
+  });
+  
+  const { error, value } = updateSchema.validate(req.body);
+  if (error) return next(createError(500, error.message));
+  
+  // If validation passes, merge the new values with existing ones, without overwriting any existing properties.
+  req.validatedUser = Object.assign({}, req.validatedUser, value);
 
+  next();
+};
 // Middleware to validate login (Joi object)
 const validateLogin = (req, res, next) => {
   const loginSchema = Joi.object({
@@ -157,6 +178,7 @@ const findUser = async (req, res, next) => {
 
 module.exports = {
   validateRegister,
+  validateUpdate,
   validateLogin,
   checkAdminLimit,
   validatePassword,
