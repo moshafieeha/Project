@@ -47,9 +47,8 @@ const readUser = async (req, res, next) => {
       role: req.foundUser.role,
     };
 
-    res.status(201).json(req.foundUser);
-    res.redirect('/profile'); // redirect to the profile route
-    
+    res.redirect('/render/profile'); // redirect to the profile route
+
   } catch (err) {
     next(createError(500, err.message));
   }

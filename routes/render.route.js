@@ -1,11 +1,13 @@
+const { log } = require("console");
 const express = require("express");
 const router = express.Router();
 const path = require("path")
 
 //////////////// login ////////////////
 router.get("/login", (req, res) => {
+    console.log(req.session.user)
   if (req.session.user) {
-    return res.redirect("/rendre/profile");
+    return res.redirect("/render/profile");
   }
   res.render("loginPage");
 });
