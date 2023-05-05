@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/user.model");
-const createError = require("http-errors");
 
 // middlewares
 const {
@@ -12,13 +10,11 @@ const {
   findUser,
 } = require("../middlewares/validation/user.validation");
 
-//controllers
+// controllers
 const { createUser, readUser } = require("../controllers/user.controller");
 
-// Register
+// request handlers
 router.post("/Register", validateRegister, checkAdminLimit, createUser);
-
-// Login
 router.post("/login", validateLogin, findUser, validatePassword, readUser);
 
 module.exports = router;

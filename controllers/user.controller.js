@@ -37,11 +37,24 @@ const readUser = async (req, res, next) => {
 
       res.status(201).json(req.foundUser);
     } catch (err) {
-      return next(createError(500, err.message));
+       next(createError(500, err.message));
     }
   }
 
+  ///////////////////////// DELETE /////////////////////////
+  const deleteUser = async (req, res, next) => {
+    try {
+      await User.findByIdAndDelete(req.session.user._id);
+      req.session.destroy();
+      res.status(201).json("done");
+    } catch (err) {
+      next(createError(500, err.message));
+    }
+  }
+
+
 module.exports = {
   createUser,
-  readUser
+  readUser,
+  deleteUser
 };

@@ -73,8 +73,8 @@ const validateRegister = (req, res, next) => {
 
   next();
 };
-// check the limitation of admins
-async function checkAdminLimit(req, res, next) {
+// Middleware to check the limit of admins
+const checkAdminLimit = async (req, res, next) => {
   try {
     const { role } = req.validatedUser;
     if (role !== "admin") {
@@ -96,7 +96,7 @@ async function checkAdminLimit(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
 // Middleware to validate login (Joi object)
 const validateLogin = (req, res, next) => {
