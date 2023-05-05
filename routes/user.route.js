@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const createError = require("http-errors");
 const User = require("../models/user.model");
+const bcrypt = require("bcrypt");
 
 // middlewares
 const {
@@ -49,8 +50,8 @@ router.put("/update", validateUpdate, async (req, res, next) => {
         phone: req.validatedUser.phone,
         username: req.validatedUser.username,
         password: req.validatedUser.password
-          ? await bcrypt.hash(req.validatedUser.password, 10)
-          : user.password,
+        ? await bcrypt.hash(req.validatedUser.password, 10)
+        : undefined,
       },
       { new: true } // return the updated document
     );
