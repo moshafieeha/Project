@@ -5,8 +5,8 @@ const { isMobilePhone } = require("validator");
 const bcrypt = require("bcrypt");
 const createError = require("http-errors");
 
-// ---- check uniqueness of username
-// ---- check uniqueness of phone
+// -- check uniqueness of username
+// -- check uniqueness of phone
 
 // check the phone number in the server-side
 const joiPhoneNumber = Joi.extend((joi) => {
@@ -73,6 +73,28 @@ const validateRegister = (req, res, next) => {
 
   next();
 };
+// Middleware to validate update (Joi object)
+const validateUpdate = (req, res, next) => {
+  const updateSchema = Joi.object({
+    fName: Joi.string().min(3).max(30).optional().trim(),
+    lName: Joi.string().min(3).max(30).optional().trim(),
+    username: Joi.string().min(3).max(30).optional().trim(),
+    password: Joi.string()
+      .pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)
+      .optional(),
+    gender: Joi.string().valid("male", "female", "not-set").optional(),
+    role: Joi.string().valid("blogger", "admin").lowercase().trim().optional(),
+    phone: joiPhoneNumber.phoneNumber().optional(),
+  });
+  
+  const { error, value } = updateSchema.validate(req.body);
+  if (error) return next(createError(500, error.message));
+  
+  // If validation passes, merge the new values with existing ones, without overwriting any existing properties.
+  req.validatedUser = Object.assign({}, req.validatedUser, value);
+
+  next();
+};
 // Middleware to check the limit of admins
 const checkAdminLimit = async (req, res, next) => {
   try {
@@ -97,28 +119,6 @@ const checkAdminLimit = async (req, res, next) => {
     next(error);
   }
 };
-// Middleware to validate update (Joi object)
-const validateUpdate = (req, res, next) => {
-  const updateSchema = Joi.object({
-    fName: Joi.string().min(3).max(30).optional().trim(),
-    lName: Joi.string().min(3).max(30).optional().trim(),
-    username: Joi.string().min(3).max(30).optional().trim(),
-    password: Joi.string()
-      .pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)
-      .optional(),
-    gender: Joi.string().valid("male", "female", "not-set").optional(),
-    role: Joi.string().valid("blogger", "admin").lowercase().trim().optional(),
-    phone: joiPhoneNumber.phoneNumber().optional(),
-  });
-  
-  const { error, value } = updateSchema.validate(req.body);
-  if (error) return next(createError(500, error.message));
-  
-  // If validation passes, merge the new values with existing ones, without overwriting any existing properties.
-  req.validatedUser = Object.assign({}, req.validatedUser, value);
-
-  next();
-};
 // Middleware to validate login (Joi object)
 const validateLogin = (req, res, next) => {
   const loginSchema = Joi.object({
@@ -138,26 +138,7 @@ const validateLogin = (req, res, next) => {
     );
   }
 
-  req.validatedLoginData = value;
   next();
-};
-// Middleware to validate the password
-const validatePassword = async (req, res, next) => {
-  const { password } = req.body;
-
-  try {
-    const isValidPassword = await bcrypt.compare(
-      password,
-      req.foundUser.password
-    );
-    if (!isValidPassword) {
-      return next(createError(400, "Invalid password"));
-    }
-
-    next();
-  } catch (err) {
-    return next(createError(500, err.message));
-  }
 };
 // Middleware to find the user in the database
 const findUser = async (req, res, next) => {
@@ -181,6 +162,5 @@ module.exports = {
   validateUpdate,
   validateLogin,
   checkAdminLimit,
-  validatePassword,
   findUser,
 };

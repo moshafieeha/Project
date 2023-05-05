@@ -6,7 +6,6 @@ const {
   validateRegister,
   validateLogin,
   checkAdminLimit,
-  validatePassword,
   findUser,
 } = require("../middlewares/validation/user.validation");
 
@@ -15,6 +14,6 @@ const { createUser, readUser } = require("../controllers/user.controller");
 
 // request handlers
 router.post("/Register", validateRegister, checkAdminLimit, createUser);
-router.post("/login", validateLogin, findUser, validatePassword, readUser);
+router.post("/login", validateLogin, findUser, readUser);
 
 module.exports = router;
