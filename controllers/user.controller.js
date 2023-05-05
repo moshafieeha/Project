@@ -48,6 +48,8 @@ const readUser = async (req, res, next) => {
     };
 
     res.status(201).json(req.foundUser);
+    res.redirect('/profile'); // redirect to the profile route
+    
   } catch (err) {
     next(createError(500, err.message));
   }
