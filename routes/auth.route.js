@@ -13,7 +13,7 @@ const {
 const { createUser, readUser } = require("../controllers/user.controller");
 
 // request handlers
-router.post("/Register", validateRegister, checkAdminLimit, createUser);
+router.post("/register", validateRegister, checkAdminLimit, createUser);
 router.post("/login", validateLogin, findUser, readUser);
 
 module.exports = router;

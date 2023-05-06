@@ -19,7 +19,9 @@ const createUser = async (req, res, next) => {
       role: user.role,
     };
 
-    res.status(201).json(user);
+    res.redirect('/render/profile'); // redirect to the profile route
+
+    //res.status(201).json(user);
   } catch (err) {
     return next(createError(500, err.message));
   }

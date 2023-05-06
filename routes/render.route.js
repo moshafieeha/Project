@@ -5,7 +5,6 @@ const path = require("path")
 
 //////////////// login ////////////////
 router.get("/login", (req, res) => {
-    console.log(req.session.user)
   if (req.session.user) {
     return res.redirect("/render/profile");
   }
@@ -14,7 +13,6 @@ router.get("/login", (req, res) => {
 
 //////////////// register ////////////////
 router.get("/register", (req, res) => {
-    console.log(req.session.user)
   if (req.session.user) {
     return res.redirect("/render/profile");
   }
