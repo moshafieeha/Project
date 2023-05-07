@@ -1,19 +1,22 @@
-const loginForm = document.getElementById('login-form');
+document.getElementById('login-form').addEventListener('submit', function(e) {
+  e.preventDefault();
 
-loginForm.addEventListener('submit', (event) => {
-  event.preventDefault();
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
 
-  const formData = new FormData(loginForm);
+  const data = {
+    username: username,
+    password: password
+  };
 
   fetch('/auth/login', {
     method: 'POST',
-    body: formData
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
   })
   .then(response => response.json())
-  .then(data => {
-    console.log(data);
-  })
-  .catch(error => {
-    console.error(error);
-  });
+  .then(data => console.log(data))
+  .catch(error => console.error(error));
 });
