@@ -2,7 +2,6 @@ const User = require("../models/user.model");
 const createError = require("http-errors");
 const bcrypt = require("bcrypt");
 
-
 ///////////////////////// CREAT /////////////////////////
 const createUser = async (req, res, next) => {
   // add new doc to the DB and is the last param of "register" in the "auth" route
@@ -19,8 +18,7 @@ const createUser = async (req, res, next) => {
       role: user.role,
     };
 
-    res.status(200).json({ message: "Login successful", redirectTo: "/render/profile" });
-
+    return res.json({ success: true, redirectUrl: '/render/profile' });
   } catch (err) {
     return next(createError(500, err.message));
   }
@@ -48,8 +46,7 @@ const readUser = async (req, res, next) => {
       role: req.foundUser.role,
     };
 
-    return res.json({ success: true, redirectUrl: '/render/profile' });
-
+    return res.json({ success: true, redirectUrl: "/render/profile" });
   } catch (err) {
     next(err);
   }

@@ -1,66 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Register</title>
   </head>
   <body>
-    register
+    <h1>Register</h1>
+    <form id="register-form">
+      <label for="fName">First Name:</label>
+      <input type="text" id="fName" name="fName" required /><br /><br />
 
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8" />
-        <title>Register</title>
-      </head>
-      <body>
-        <h1>Register</h1>
-        <form id="register-form">
-          <label for="fName">First Name:</label>
-          <input type="text" id="fName" name="fName" required /><br /><br />
+      <label for="lName">Last Name:</label>
+      <input type="text" id="lName" name="lName" required /><br /><br />
 
-          <label for="lName">Last Name:</label>
-          <input type="text" id="lName" name="lName" required /><br /><br />
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required /><br /><br />
 
-          <label for="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            required
-          /><br /><br />
+      <label for="password">Password:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+        required
+      /><br /><br />
 
-          <label for="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
-            required
-          /><br /><br />
+      <label for="gender">Gender:</label>
+      <select id="gender" name="gender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="not-set">Not Set</option></select
+      ><br /><br />
 
-          <label for="gender">Gender:</label>
-          <select id="gender" name="gender">
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="not-set">Not Set</option></select
-          ><br /><br />
+      <label for="role">Role:</label>
+      <select id="role" name="role">
+        <option value="blogger">Blogger</option>
+        <option value="admin">Admin</option></select
+      ><br /><br />
 
-          <label for="role">Role:</label>
-          <select id="role" name="role">
-            <option value="blogger">Blogger</option>
-            <option value="admin">Admin</option></select
-          ><br /><br />
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" name="phone" required /><br /><br />
 
-          <label for="phone">Phone Number:</label>
-          <input type="tel" id="phone" name="phone" required /><br /><br />
+      <button type="submit">Register</button>
+    </form>
 
-          <button type="submit">Register</button>
-        </form>
-      </body>
-    </html>
+    <div id="error-message" style="color: red"></div>
   </body>
   <script src="/javascripts/fetchData.js"></script>
 </html>
