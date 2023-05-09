@@ -6,15 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
 </head>
-  <body>
-    <h1>Welcome, <%= user.username %>!</h1>
-    <p>Your full name is <%= user.fName %> <%= user.lName %>.</p>
-    <p>Your phone number is <%= user.phone %>.</p>
-    <% if (user.role === 'admin') { %>
-      <p>You are an administrator.</p>
-    <% } else { %>
-      <p>You are a blogger.</p>
-    <% } %>
-    <!-- <a href="/logout">Log Out</a> -->
-  </body>
+<body>
+  <h1>Welcome, <%= user.username %>!</h1>
+  <p>Your full name is <%= user.fName %> <%= user.lName %>.</p>
+  <p>Your phone number is <%= user.phone %>.</p>
+  <% if (user.role === 'admin') { %>
+    <p>You are an administrator.</p>
+  <% } else { %>
+    <p>You are a blogger.</p>
+  <% } %>
+  <!-- Logout button -->
+  <a href="/render/logout" class="logout-button">Log Out</a>
+</body>
 </html>
