@@ -153,7 +153,7 @@ const findUser = async (req, res, next) => {
     req.foundUser = user;
     next();
   } catch (err) {
-    return next(createError(500, err.message));
+    next(err);
   }
 };
 
