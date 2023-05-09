@@ -38,20 +38,19 @@ app.use(session({
 // main router
 app.use('/', indexRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+
+// Global error handler middleware
+app.use((err, req, res, next) => {
+  // Set the status code and default error message
+  const statusCode = err.status || 500;
+  const message = err.message || "Internal Server Error";
+
+  // Log the error to the console for debugging purposes
+  console.error(`[${req.method} ${req.url}] Error:`, err);
+
+  // Send the JSON response
+  res.status(statusCode).json({ error: message });
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
 
 module.exports = app;
