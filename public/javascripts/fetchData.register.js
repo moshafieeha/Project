@@ -1,4 +1,3 @@
-
 // fetch data from the register page
 document.getElementById('register-form').addEventListener('submit', function(e) {
     e.preventDefault();
