@@ -14,59 +14,221 @@
     <title>Profile</title>
   </head>
   <body>
-
     <header class="p-3 text-bg-dark">
       <div class="container">
-        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-          <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-            <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+        <div
+          class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+        >
+          <a
+            href="/"
+            class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
+          >
+            <svg
+              class="bi me-2"
+              width="40"
+              height="32"
+              role="img"
+              aria-label="Bootstrap"
+            >
+              <use xlink:href="#bootstrap"></use>
+            </svg>
           </a>
-    
-          <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+
+          <ul
+            class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
+          >
             <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
             <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
             <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li>
             <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
             <li><a href="#" class="nav-link px-2 text-white">About</a></li>
           </ul>
-    
+
           <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-            <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
+            <input
+              type="search"
+              class="form-control form-control-dark text-bg-dark"
+              placeholder="Search..."
+              aria-label="Search"
+            />
           </form>
-    
+
           <div class="text-end">
-            <button type="button" class="btn btn-outline-light me-2">Login</button>
+            <button type="button" class="btn btn-outline-light me-2">
+              Login
+            </button>
             <button type="button" class="btn btn-warning">Sign-up</button>
           </div>
         </div>
       </div>
     </header>
 
-    
     <main class="container">
       <div class="bg-body-tertiary p-5 rounded mt-5">
         <h1>Welcome, <%= user.username %>!</h1>
-        <p class="lead">Your full name is <%= user.fName %> <%= user.lName %>.</p>
+        <p class="lead">
+          Your full name is <%= user.fName %> <%= user.lName %>.
+        </p>
         <% if (user.role === 'admin') { %>
-          <p>You are an administrator.</p>
+        <p>You are an administrator.</p>
         <% } else { %>
-          <p>You are a blogger.</p>
+        <p>You are a blogger.</p>
         <% } %>
-        <a class="btn btn-primary" href="../components/navbar/" role="button">Edit profile</a>
+
+        <!-- Edit profile button -->
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#editProfileModal"
+        >
+          Edit profile
+        </button>
+
+        <!-- Modal -->
+        <div
+          class="modal fade"
+          id="editProfileModal"
+          tabindex="-1"
+          aria-labelledby="editProfileModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">
+                  Edit Profile
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <!-- Form -->
+                <form id="editProfileForm">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-floating mb-4">
+                        <input
+                          class="form-control"
+                          type="text"
+                          id="fName"
+                          name="fName"
+                          required
+                          placeholder="First name"
+                        />
+                        <label for="fName">First name</label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-floating mb-4">
+                        <input
+                          class="form-control"
+                          type="text"
+                          id="lName"
+                          name="lName"
+                          placeholder="Last name"
+                        />
+                        <label for="lName">Last name</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-floating mb-4">
+                        <input
+                          class="form-control"
+                          type="text"
+                          id="username"
+                          name="username"
+                          placeholder="Username"
+                        />
+                        <label for="username">Username</label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-floating mb-4">
+                        <input
+                          class="form-control"
+                          type="text"
+                          id="password"
+                          name="password"
+                          placeholder="Password"
+                          pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+                        />
+                        <label for="password">Password</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-floating mb-4">
+                        <select
+                          class="form-select form-select-lg"
+                          id="gender"
+                          name="gender"
+                        >
+                          <option value="" selected disabled>Choose</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="not-set">not-set</option>
+                        </select>
+                        <label for="gender">Gender</label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-floating mb-4">
+                        <select
+                          class="form-select form-select-lg"
+                          id="role"
+                          name="role"
+                        >
+                          <option value="" selected disabled>Choose</option>
+                          <option value="blogger">Blogger</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                        <label for="role">Role</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-floating mb-4">
+                        <input
+                          class="form-control"
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          placeholder="Phone number"
+                        />
+                        <label for="phone">Phone number</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="submit" class="col-12 btn btn-dark">
+                      Update
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
-  
-    
-  <!-- Logout button -->
-  <a href="/render/logout" class=" btn btn-light"  role="button">Log Out</a>
-</body>
-<script
-  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-  crossorigin="anonymous"
-></script>
-<script src="/javascripts/fetchData.login.js"></script>
+
+    <!-- Logout button -->
+    <a href="/render/logout" class="btn" role="button">Log Out</a>
+  </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+    crossorigin="anonymous"
+  ></script>
+  <script src="/javascripts/fetchData.update.js"></script>
 </html>
-
-
-

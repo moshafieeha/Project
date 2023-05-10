@@ -80,7 +80,7 @@ const updateUser = async (req, res, next) => {
       role: user.role,
     };
 
-    res.status(201).json(user);
+    return res.json({ success: true, redirectUrl: "/render/profile" });
   } catch (err) {
     return next(createError(500, err.message));
   }
