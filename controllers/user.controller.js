@@ -13,8 +13,8 @@ const createUser = async (req, res, next) => {
     req.session.user = {
       _id: user._id,
       username: user.username,
-      fName: user.firstName,
-      lName: user.lastName,
+      fName: user.fName,
+      lName: user.lName,
       role: user.role,
     };
 
@@ -41,8 +41,8 @@ const readUser = async (req, res, next) => {
     req.session.user = {
       _id: req.foundUser._id,
       username: req.foundUser.username,
-      fName: req.foundUser.firstName,
-      lName: req.foundUser.lastName,
+      fName: req.foundUser.fName,
+      lName: req.foundUser.lName,
       role: req.foundUser.role,
     };
 
